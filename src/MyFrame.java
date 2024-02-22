@@ -134,22 +134,23 @@ public class MyFrame extends JFrame implements ActionListener {
 	private String operation = "";
 	private String command;
 	private String currentNum;
-	private String input;
 	private boolean operationCommand = false;
 	private boolean equalsCommand = false;
-
+	private boolean firstNumSet = false;
+	
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// Action Command bekommen
+		// ActionCommand bekommen
 		command = e.getActionCommand();
-		input = inputField.getText();
+		//currentNum = inputField.getText();
 		
-		// Wenn Error im Display steht, werden alle Tasten außer die "C"-Taste disabled
-		if (input.equals("ERROR") && !command.equals("C")) {
+		// Wenn im Display ERROR steht, kann nur die "C"-Taste gedrückt werden
+		if (inputField.getText().equals("ERROR") && !command.equals("C")) {
 			return;
 		}
 		
-		// Wenn einmal gleich gedrückt wurde, darf es danach nicht unmittelbar nochmal gedrückt werden
+		
 		if (equalsCommand) {
 			if (command.equals("=")) {
 				return;				
@@ -159,12 +160,15 @@ public class MyFrame extends JFrame implements ActionListener {
 			}
 		}
 		
-		// Plus-Minus-Switch-Taste konfigurieren
+		// Funktion des Plus-Minus-Switch-Button implementieren
 		if (command.equals("+/-")) {
-			if (input.charAt(0) != '-') {
-				currentNum = String.format("-%s", input);
+			// Wenn Zahl im Display nicht negativ --> setze ein Minus davor
+			if (inputField.getText().charAt(0) != '-') {
+				currentNum = String.format("-%s", inputField.getText());
 				inputField.setText(currentNum);
 			}
+			
+			// Wenn Zahl im Display negativ --> entferne das Minuszeichen am Anfang
 			else {
 				currentNum = inputField.getText().substring(1);
 				inputField.setText(currentNum);
@@ -174,31 +178,49 @@ public class MyFrame extends JFrame implements ActionListener {
 		// Der Command von allen Tasten, abgesehen von der plusMinus-Taste hat eine Stringlänge von 1.		
 		// Wenn Taste mit Nummer gedrückt wurde...
 		else if (command.charAt(0) >= '0' && command.charAt(0) <= '9') {
-			// Steht im Display eine 0?
-			if (inputField.getText().equals("0") || operationCommand == true) {
+			// Eine neue Zahl wird eingeben (im Display steht eine 0)
+			if (operationCommand) {
+				inputField.setText("0");
 				operationCommand = false;
+			}
+			if (inputField.getText().equals("0")) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! || operationCommand == false
+				// Es darf wieder ein Rechenoperationszeichen ausgewählt werden
+				//operationCommand = false;
+		
+				// Neue Zahl "anlegen"
 				currentNum = command;
 				inputField.setText(currentNum);
 			}
+			
+			// Eine bestehende Zahl wird durch eine Ziffer erweitert
 			else {
 				currentNum = inputField.getText().concat(command);
 				inputField.setText(currentNum);
 			}
 		}
 		
+		// Komma-Taste implementieren
 		else if (command.equals(",")) {
+			
 			if (operationCommand) {
 				inputField.setText("0.");
 				operationCommand = false;
 			}
 			
-			currentNum = input;
+			// Aktuelle Zahl aus dem Textfeld auslesen
+			currentNum = inputField.getText();
+			
+			// Wenn die Zahl bereits ein Komma enthält, darf kein zweites Komma eingegeben werden
 			if(currentNum.contains(".")) {
 				return;
 			}
+			
+			// Wenn noch kein Komma in der Zahl --> Komma zur Zahl hinzufügen und im Display anzeigen
 			inputField.setText(currentNum.concat("."));
 		}
 		
+		
+		// "C"-Button --> Alles zurücksetzen
 		else if (command.equals("C")) {
 			firstNum = "0";
 			currentNum = "0";
@@ -209,7 +231,7 @@ public class MyFrame extends JFrame implements ActionListener {
 		else if (command.equals("/")) {
 			operationCommand = true;
 			operation = "/";
-			firstNum = input;
+			firstNum = inputField.getText();
 			if (firstNum.endsWith(",")) {
 				firstNum = firstNum.substring(0, firstNum.length() - 2);
 			}
@@ -220,13 +242,30 @@ public class MyFrame extends JFrame implements ActionListener {
 		else if (command.equals("+")) {
 			operationCommand = true;
 			operation = "+";
-			firstNum = input;
-			if (firstNum.endsWith(",")) {
-				firstNum = firstNum.substring(0, firstNum.length() - 2);
+			
+			// Wenn firstNum noch nicht gesetzt
+			if (!firstNumSet) {
+				firstNum = inputField.getText();
+				firstNumSet = true;
+				if (firstNum.endsWith(",")) {
+					firstNum = firstNum.substring(0, firstNum.length() - 2);
+				}
 			}
+			else {
+				berechne();
+				firstNumSet = false;
+			}
+			
 			//currentNum = "0";
 			//inputField.setText(currentNum);
 		}
+		
+		
+		
+		
+		
+		
+		
 		
 		else if (command.equals("-")) {
 			operationCommand = true;
@@ -242,7 +281,7 @@ public class MyFrame extends JFrame implements ActionListener {
 		else if (command.equals("*")) {
 			operationCommand = true;
 			operation = "*";
-			firstNum = input;
+			firstNum = inputField.getText();
 			if (firstNum.endsWith(",")) {
 				firstNum = firstNum.substring(0, firstNum.length() - 2);
 			}
@@ -251,43 +290,87 @@ public class MyFrame extends JFrame implements ActionListener {
 		}
 		
 		else if (command.equals("=")) {
-			if (operation == "") {
-				return;
-			}
-			equalsCommand = true;	
+			equalsCommand = true;
 			System.out.println(firstNum + " " + currentNum);
+			 
+			double num1 = Double.parseDouble(firstNum);
+			double num2 = Double.parseDouble(currentNum);
 			double erg = 0;
+			
+			
 			switch (operation) {
 			case "/":
 				if (currentNum.equalsIgnoreCase("0")) {
 					inputField.setText("ERROR");
 					return;
 				}
-				erg = Double.parseDouble(firstNum) / Double.parseDouble(currentNum);					
+				erg = num1 / num2;					
 				break;
 			case "*":
-				erg = Double.parseDouble(firstNum) * Double.parseDouble(currentNum);
+				erg = num1 * num2;
 				break;
 			case "+":
-				erg = Double.parseDouble(firstNum) + Double.parseDouble(currentNum);
+				erg = num1 + num2;
 				break;
 			case "-":
-				erg = Double.parseDouble(firstNum) - Double.parseDouble(currentNum);
+				erg = num1 - num2;
 				break;
 			default:
-				erg = 0;
+				return;
 			}
 			
+			// Ergebnis der aktuellen Berechnung als erste Zahl für die nächste Berechnung setzen
+			firstNum = String.valueOf(erg);
+			
+			// Wenn das Ergebnis ein int ist --> im Display als Ganzzahl anzeigen, sonst als double anzeigen
 			if (erg % 1 == 0) {
 				inputField.setText(String.valueOf((int)erg));
 			}
 			else {
-				inputField.setText(String.valueOf(erg));				
+				inputField.setText(firstNum);				
 			}
-			firstNum = String.valueOf(erg);
+			
 		}
 		
 	}
+
+	private void berechne() {
+		if (operation == "") {
+			return;
+		}
+		//equalsCommand = true;	
+		System.out.println(firstNum + " " + currentNum);
+		double erg = 0;
+		switch (operation) {
+		case "/":
+			if (currentNum.equalsIgnoreCase("0")) {
+				inputField.setText("ERROR");
+				return;
+			}
+			erg = Double.parseDouble(firstNum) / Double.parseDouble(currentNum);					
+			break;
+		case "*":
+			erg = Double.parseDouble(firstNum) * Double.parseDouble(currentNum);
+			break;
+		case "+":
+			erg = Double.parseDouble(firstNum) + Double.parseDouble(currentNum);
+			break;
+		case "-":
+			erg = Double.parseDouble(firstNum) - Double.parseDouble(currentNum);
+			break;
+		default:
+			erg = 0;
+		}
+		
+		if (erg % 1 == 0) {
+			inputField.setText(String.valueOf((int)erg));
+		}
+		else {
+			inputField.setText(String.valueOf(erg));				
+		}
+		firstNum = String.valueOf(erg);
+	}
+
 	
 KeyListener listener = new KeyListener() {	
 	@Override
