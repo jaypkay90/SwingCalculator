@@ -134,18 +134,22 @@ public class MyFrame extends JFrame implements ActionListener {
 	private String operation = "";
 	private String command;
 	private String currentNum;
+	private String input;
 	private boolean operationCommand = false;
 	private boolean equalsCommand = false;
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		// Action Command bekommen
 		command = e.getActionCommand();
-		//currentNum = inputField.getText();
+		input = inputField.getText();
 		
-		if (inputField.getText().equals("ERROR") && !command.equals("C")) {
+		// Wenn Error im Display steht, werden alle Tasten außer die "C"-Taste disabled
+		if (input.equals("ERROR") && !command.equals("C")) {
 			return;
 		}
 		
+		// Wenn einmal gleich gedrückt wurde, darf es danach nicht unmittelbar nochmal gedrückt werden
 		if (equalsCommand) {
 			if (command.equals("=")) {
 				return;				
@@ -155,9 +159,10 @@ public class MyFrame extends JFrame implements ActionListener {
 			}
 		}
 		
+		// Plus-Minus-Switch-Taste konfigurieren
 		if (command.equals("+/-")) {
-			if (inputField.getText().charAt(0) != '-') {
-				currentNum = String.format("-%s", inputField.getText());
+			if (input.charAt(0) != '-') {
+				currentNum = String.format("-%s", input);
 				inputField.setText(currentNum);
 			}
 			else {
@@ -187,7 +192,7 @@ public class MyFrame extends JFrame implements ActionListener {
 				operationCommand = false;
 			}
 			
-			currentNum = inputField.getText();
+			currentNum = input;
 			if(currentNum.contains(".")) {
 				return;
 			}
@@ -204,7 +209,7 @@ public class MyFrame extends JFrame implements ActionListener {
 		else if (command.equals("/")) {
 			operationCommand = true;
 			operation = "/";
-			firstNum = inputField.getText();
+			firstNum = input;
 			if (firstNum.endsWith(",")) {
 				firstNum = firstNum.substring(0, firstNum.length() - 2);
 			}
@@ -215,7 +220,7 @@ public class MyFrame extends JFrame implements ActionListener {
 		else if (command.equals("+")) {
 			operationCommand = true;
 			operation = "+";
-			firstNum = inputField.getText();
+			firstNum = input;
 			if (firstNum.endsWith(",")) {
 				firstNum = firstNum.substring(0, firstNum.length() - 2);
 			}
@@ -237,7 +242,7 @@ public class MyFrame extends JFrame implements ActionListener {
 		else if (command.equals("*")) {
 			operationCommand = true;
 			operation = "*";
-			firstNum = inputField.getText();
+			firstNum = input;
 			if (firstNum.endsWith(",")) {
 				firstNum = firstNum.substring(0, firstNum.length() - 2);
 			}
