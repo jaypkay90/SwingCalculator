@@ -18,25 +18,17 @@ import javax.swing.JTextField;
 public class MyFrame extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private JButton[] numberBtns;
-	private JButton[] operationBtns;
-	private JButton commaBtn;
-	private JButton plusMinusBtn;
-	private JPanel numberPanel;
-	private JPanel operationPanel;
-	private JPanel inputPanel;
+	
+	private JButton[] numberBtns, operationBtns;
 	private JTextField inputField;
 	
 	MyFrame() {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(new Dimension(300,400));
 		this.setResizable(false);
-		createNumberPanel();
-		createOperationPanel();
-		createInputPanel();
-		this.add(inputPanel, BorderLayout.NORTH);
-		this.add(operationPanel, BorderLayout.EAST);
-		this.add(numberPanel, BorderLayout.CENTER);
+		this.add(createInputPanel(), BorderLayout.NORTH);
+		this.add(createOperationPanel(), BorderLayout.EAST);
+		this.add(createNumberPanel(), BorderLayout.CENTER);
 		
 		// Taschenrechner-Bild als Icon hinzufügen
 		ImageIcon icon = new ImageIcon("calculator.png");
@@ -46,40 +38,37 @@ public class MyFrame extends JFrame implements ActionListener {
 		this.setVisible(true);
 	}
 	
-	private void createInputPanel() {
-		inputPanel = new JPanel();
+	private JPanel createInputPanel() {
+		JPanel inputPanel = new JPanel();
 		inputPanel.setLayout(new BorderLayout());
 		inputPanel.setPreferredSize(new Dimension(100,100));
 		inputPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+		
 		inputField = new JTextField();
 		inputField.setEditable(false);
 		inputField.setFocusable(true);
 		inputField.addKeyListener(listener);
 		inputField.setText("0");
 		inputField.setHorizontalAlignment(JTextField.RIGHT);
+		
 		inputPanel.add(inputField, BorderLayout.CENTER);
+		return inputPanel;
 	}
 	
-	private void createNumberPanel() {
-		numberPanel = new JPanel();
+	private JPanel createNumberPanel() {
+		JPanel numberPanel = new JPanel();
 		numberPanel.setLayout(new GridLayout(4,3,5,5));
 		numberPanel.setPreferredSize(new Dimension(300,400));
 		numberPanel.setBorder(BorderFactory.createEmptyBorder(0,10,10,0));
-		addNumberBtns();
-		commaBtn = new JButton(",");
-		plusMinusBtn = new JButton("+/-");
-		commaBtn.addActionListener(this);
-		commaBtn.setFocusable(false);
-		plusMinusBtn.addActionListener(this);
-		plusMinusBtn.setFocusable(false);
-		numberPanel.add(commaBtn);
-		numberPanel.add(plusMinusBtn);
+		addNumberBtns(numberPanel);
+		
+		return numberPanel;
 	}
 	
-	private void addNumberBtns() {
-		numberBtns = new JButton[10];
+	private void addNumberBtns(JPanel numberPanel) {
+		numberBtns = new JButton[12];
 
-		for (int i = numberBtns.length - 1; i >= 0 ; i--) {
+		for (int i = numberBtns.length - 3; i >= 0 ; i--) {
 			numberBtns[i] = new JButton();
 			if (i == 0) {
 				numberBtns[i].setText(String.format("%d", i));
@@ -98,17 +87,30 @@ public class MyFrame extends JFrame implements ActionListener {
 			numberBtns[i].setFocusable(false);
 			numberPanel.add(numberBtns[i]);
 		}
+		
+		// Komma-Button und Plus-Minus-Switch-Button hinzufügen
+		numberBtns[10] = new JButton(",");
+		numberBtns[11] = new JButton("+/-");
+		
+		for (int i = 10; i < 12; i++) {
+			numberBtns[i].addActionListener(this);
+			numberBtns[i].setFocusable(false);
+			numberPanel.add(numberBtns[i]);
+		}
+		
 	}
 	
-	private void createOperationPanel() {
-		operationPanel = new JPanel();
+	private JPanel createOperationPanel() {
+		JPanel operationPanel = new JPanel();
 		operationPanel.setLayout(new GridLayout(6,1,10,5));
 		operationPanel.setPreferredSize(new Dimension(100, 400));
 		operationPanel.setBorder(BorderFactory.createEmptyBorder(0,10,10,10));
-		addOperationBtns();
+		addOperationBtns(operationPanel);
+		
+		return operationPanel;
 	}
 	
-	private void addOperationBtns() {
+	private void addOperationBtns(JPanel operationPanel) {
 		operationBtns = new JButton[6];
 		for (int i = 0; i < operationBtns.length; i++) {
 			operationBtns[i] = new JButton();
@@ -117,7 +119,6 @@ public class MyFrame extends JFrame implements ActionListener {
 		}
 		
 		operationBtns[0].setText("C");
-		//operationBtns[0].setActionCommand("C");
 		operationBtns[1].setText("/");
 		operationBtns[2].setText("*");
 		operationBtns[3].setText("-");
@@ -296,6 +297,10 @@ KeyListener listener = new KeyListener() {
 			pressedKey = "=";
 		}
 		
+		if (pressedKey.equals(".")) {
+			pressedKey = ",";
+		}
+		
 		for (JButton button : numberBtns) {
 			if (button.getActionCommand().equals(pressedKey)) {
 				button.doClick();
@@ -310,7 +315,7 @@ KeyListener listener = new KeyListener() {
 			}
 		}
 		
-		if (commaBtn.getActionCommand().equals(pressedKey)) {
+		/*if (commaBtn.getActionCommand().equals(pressedKey)) {
 			commaBtn.doClick();
 			return;
 		}
@@ -318,7 +323,7 @@ KeyListener listener = new KeyListener() {
 		if (plusMinusBtn.getActionCommand().equals(pressedKey)) {
 			plusMinusBtn.doClick();
 			return;
-		}
+		}*/
 	}
 
 	@Override
