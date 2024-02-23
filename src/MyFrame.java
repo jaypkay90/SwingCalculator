@@ -139,6 +139,7 @@ public class MyFrame extends JFrame implements ActionListener {
 	private boolean equalsCommand = false;
 	private boolean firstNumSet = false;
 	private String[] calcOperations = {"*", "+", "-", "/"};
+	private String currentOperationCommand = "", lastOperationCommand;
 	
 	
 	@Override
@@ -166,14 +167,14 @@ public class MyFrame extends JFrame implements ActionListener {
 		if (command.equals("+/-")) {
 			// Wenn Zahl im Display nicht negativ --> setze ein Minus davor
 			if (inputField.getText().charAt(0) != '-') {
-				currentNum = String.format("-%s", inputField.getText());
-				inputField.setText(currentNum);
+				//currentNum = String.format("-%s", inputField.getText());
+				inputField.setText(String.format("-%s", inputField.getText()));
 			}
 			
 			// Wenn Zahl im Display negativ --> entferne das Minuszeichen am Anfang
 			else {
-				currentNum = inputField.getText().substring(1);
-				inputField.setText(currentNum);
+				//currentNum = inputField.getText().substring(1);
+				inputField.setText(inputField.getText().substring(1));
 			}
 		}
 		
@@ -189,19 +190,20 @@ public class MyFrame extends JFrame implements ActionListener {
 			// Eine neue Zahl wird eingeben (im Display steht eine 0)
 			if (inputField.getText().equals("0")) {
 				// Neue Zahl "anlegen"
-				currentNum = command;
-				inputField.setText(currentNum);
+				//currentNum = command;
+				inputField.setText(command);
 			}
 			
 			// Eine bestehende Zahl wird durch eine Ziffer erweitert
 			else {
-				currentNum = inputField.getText().concat(command);
-				inputField.setText(currentNum);
+				//currentNum = inputField.getText().concat(command);
+				inputField.setText(inputField.getText().concat(command));
 			}
 		}
 		
 		// Komma-Taste implementieren
 		else if (command.equals(",")) {
+			String input = inputField.getText();
 			
 			if (operationCommand) {
 				inputField.setText("0.");
@@ -209,15 +211,15 @@ public class MyFrame extends JFrame implements ActionListener {
 			}
 			
 			// Aktuelle Zahl aus dem Textfeld auslesen
-			currentNum = inputField.getText();
+			//currentNum = inputField.getText();
 			
 			// Wenn die Zahl bereits ein Komma enthält, darf kein zweites Komma eingegeben werden
-			if(currentNum.contains(".")) {
+			if(input.contains(".")) {
 				return;
 			}
 			
 			// Wenn noch kein Komma in der Zahl --> Komma zur Zahl hinzufügen und im Display anzeigen
-			inputField.setText(currentNum.concat("."));
+			inputField.setText(input.concat("."));
 		}
 		
 		
@@ -226,6 +228,7 @@ public class MyFrame extends JFrame implements ActionListener {
 			firstNum = "0";
 			currentNum = "0";
 			inputField.setText("0");
+			operation = "";
 		}
 		
 		// Wenn Taste eine Rechenoperation ist...
@@ -239,21 +242,42 @@ public class MyFrame extends JFrame implements ActionListener {
 		}*/
 		
 		// Wenn Taste eine Rechenoperation ist...
-		else if (Arrays.binarySearch(calcOperations, command) >= 0) {
+		/*else if (Arrays.binarySearch(calcOperations, command) >= 0) {
 			operationCommand = true;
+			
 			operation = command;
-			currentNum = "0";
+			//currentNum = "0";
 			firstNum = inputField.getText();
 			if (firstNum.endsWith(",")) {
 				firstNum = firstNum.substring(0, firstNum.length() - 2);
 			}
 			
 			//berechne();
+		}*/
+		
+		// Wenn Taste eine Rechenoperation ist...
+		else if (Arrays.binarySearch(calcOperations, command) >= 0) {
+			if (operationCommand) {
+				return;
+			}
+			operationCommand = true;
+			lastOperationCommand = operation;
+			operation = command;
+			if (lastOperationCommand != "") {
+				berechne();
+			}
+			else {
+				firstNum = inputField.getText();
+				if (firstNum.endsWith(",")) {
+					firstNum = firstNum.substring(0, firstNum.length() - 2);
+				}				
+			}
 		}
 		
 		// Wenn "=" Taste gedrückt wurde
 		else if (command.equals("=")) {
 			equalsCommand = true;
+			currentNum = inputField.getText();
 			System.out.println(firstNum + " " + currentNum);
 			 
 			double num1 = Double.parseDouble(firstNum);
@@ -283,18 +307,21 @@ public class MyFrame extends JFrame implements ActionListener {
 			}
 			
 			// Ergebnis der aktuellen Berechnung als erste Zahl für die nächste Berechnung setzen
-			firstNum = String.valueOf(erg);
+			//firstNum = String.valueOf(erg);
 			currentNum = "0";
+			operation = "";
 			
 			// Wenn das Ergebnis ein int ist --> im Display als Ganzzahl anzeigen, sonst als double anzeigen
 			if (erg % 1 == 0) {
 				inputField.setText(String.valueOf((int)erg));
 			}
 			else {
-				inputField.setText(firstNum);				
+				inputField.setText(firstNum);
+				inputField.setText(String.valueOf(erg));
 			}
 			
 		}
+}
 		
 		/*
 		else if (command.equals("/")) {
@@ -358,45 +385,6 @@ public class MyFrame extends JFrame implements ActionListener {
 			//inputField.setText(currentNum);
 		}*/
 		
-	}
-
-	/*private void berechne() {
-		if (operation == "") {
-			return;
-		}
-		//equalsCommand = true;	
-		System.out.println(firstNum + " " + currentNum);
-		double erg = 0;
-		switch (operation) {
-		case "/":
-			if (currentNum.equalsIgnoreCase("0")) {
-				inputField.setText("ERROR");
-				return;
-			}
-			erg = Double.parseDouble(firstNum) / Double.parseDouble(currentNum);					
-			break;
-		case "*":
-			erg = Double.parseDouble(firstNum) * Double.parseDouble(currentNum);
-			break;
-		case "+":
-			erg = Double.parseDouble(firstNum) + Double.parseDouble(currentNum);
-			break;
-		case "-":
-			erg = Double.parseDouble(firstNum) - Double.parseDouble(currentNum);
-			break;
-		default:
-			erg = 0;
-		}
-		
-		if (erg % 1 == 0) {
-			inputField.setText(String.valueOf((int)erg));
-		}
-		else {
-			inputField.setText(String.valueOf(erg));				
-		}
-		firstNum = String.valueOf(erg);
-	}*/
-	
 	private void berechne() {
 		equalsCommand = true;
 		currentNum = inputField.getText();
@@ -407,7 +395,7 @@ public class MyFrame extends JFrame implements ActionListener {
 		double erg = 0;
 		
 		
-		switch (operation) {
+		switch (lastOperationCommand) {
 		case "/":
 			if (currentNum.equalsIgnoreCase("0")) {
 				inputField.setText("ERROR");
@@ -437,8 +425,10 @@ public class MyFrame extends JFrame implements ActionListener {
 			inputField.setText(String.valueOf((int)erg));
 		}
 		else {
-			inputField.setText(firstNum);				
+			inputField.setText(firstNum);
+			inputField.setText(String.valueOf(erg));
 		}
+		
 	}
 
 	
