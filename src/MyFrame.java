@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -137,6 +138,7 @@ public class MyFrame extends JFrame implements ActionListener {
 	private boolean operationCommand = false;
 	private boolean equalsCommand = false;
 	private boolean firstNumSet = false;
+	private String[] calcOperations = {"*", "+", "-", "/"};
 	
 	
 	@Override
@@ -178,15 +180,14 @@ public class MyFrame extends JFrame implements ActionListener {
 		// Der Command von allen Tasten, abgesehen von der plusMinus-Taste hat eine Stringlänge von 1.		
 		// Wenn Taste mit Nummer gedrückt wurde...
 		else if (command.charAt(0) >= '0' && command.charAt(0) <= '9') {
-			// Eine neue Zahl wird eingeben (im Display steht eine 0)
+			// Wenn nach einem Rechenoperations-Button eine Zahl gedrückt wird, dürfen wieder Rechenoperationen durchgeführt werden
 			if (operationCommand) {
 				inputField.setText("0");
 				operationCommand = false;
 			}
-			if (inputField.getText().equals("0")) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! || operationCommand == false
-				// Es darf wieder ein Rechenoperationszeichen ausgewählt werden
-				//operationCommand = false;
-		
+			
+			// Eine neue Zahl wird eingeben (im Display steht eine 0)
+			if (inputField.getText().equals("0")) {
 				// Neue Zahl "anlegen"
 				currentNum = command;
 				inputField.setText(currentNum);
@@ -227,7 +228,75 @@ public class MyFrame extends JFrame implements ActionListener {
 			inputField.setText("0");
 		}
 		
-		// Tasten mit Rechenoperationen
+		// Wenn Taste eine Rechenoperation ist...
+		/*else if (Arrays.binarySearch(calcOperations, command) >= 0) {
+			operationCommand = true;
+			operation = command;
+			firstNum = inputField.getText();
+			if (firstNum.endsWith(",")) {
+				firstNum = firstNum.substring(0, firstNum.length() - 2);
+			}
+		}*/
+		
+		// Wenn Taste eine Rechenoperation ist...
+		else if (Arrays.binarySearch(calcOperations, command) >= 0) {
+			operationCommand = true;
+			operation = command;
+			currentNum = "0";
+			firstNum = inputField.getText();
+			if (firstNum.endsWith(",")) {
+				firstNum = firstNum.substring(0, firstNum.length() - 2);
+			}
+			
+			//berechne();
+		}
+		
+		// Wenn "=" Taste gedrückt wurde
+		else if (command.equals("=")) {
+			equalsCommand = true;
+			System.out.println(firstNum + " " + currentNum);
+			 
+			double num1 = Double.parseDouble(firstNum);
+			double num2 = Double.parseDouble(currentNum);
+			double erg = 0;
+			
+			
+			switch (operation) {
+			case "/":
+				if (currentNum.equalsIgnoreCase("0")) {
+					inputField.setText("ERROR");
+					return;
+				}
+				erg = num1 / num2;					
+				break;
+			case "*":
+				erg = num1 * num2;
+				break;
+			case "+":
+				erg = num1 + num2;
+				break;
+			case "-":
+				erg = num1 - num2;
+				break;
+			default:
+				return;
+			}
+			
+			// Ergebnis der aktuellen Berechnung als erste Zahl für die nächste Berechnung setzen
+			firstNum = String.valueOf(erg);
+			currentNum = "0";
+			
+			// Wenn das Ergebnis ein int ist --> im Display als Ganzzahl anzeigen, sonst als double anzeigen
+			if (erg % 1 == 0) {
+				inputField.setText(String.valueOf((int)erg));
+			}
+			else {
+				inputField.setText(firstNum);				
+			}
+			
+		}
+		
+		/*
 		else if (command.equals("/")) {
 			operationCommand = true;
 			operation = "/";
@@ -287,54 +356,11 @@ public class MyFrame extends JFrame implements ActionListener {
 			}
 			//currentNum = "0";
 			//inputField.setText(currentNum);
-		}
-		
-		else if (command.equals("=")) {
-			equalsCommand = true;
-			System.out.println(firstNum + " " + currentNum);
-			 
-			double num1 = Double.parseDouble(firstNum);
-			double num2 = Double.parseDouble(currentNum);
-			double erg = 0;
-			
-			
-			switch (operation) {
-			case "/":
-				if (currentNum.equalsIgnoreCase("0")) {
-					inputField.setText("ERROR");
-					return;
-				}
-				erg = num1 / num2;					
-				break;
-			case "*":
-				erg = num1 * num2;
-				break;
-			case "+":
-				erg = num1 + num2;
-				break;
-			case "-":
-				erg = num1 - num2;
-				break;
-			default:
-				return;
-			}
-			
-			// Ergebnis der aktuellen Berechnung als erste Zahl für die nächste Berechnung setzen
-			firstNum = String.valueOf(erg);
-			
-			// Wenn das Ergebnis ein int ist --> im Display als Ganzzahl anzeigen, sonst als double anzeigen
-			if (erg % 1 == 0) {
-				inputField.setText(String.valueOf((int)erg));
-			}
-			else {
-				inputField.setText(firstNum);				
-			}
-			
-		}
+		}*/
 		
 	}
 
-	private void berechne() {
+	/*private void berechne() {
 		if (operation == "") {
 			return;
 		}
@@ -369,6 +395,50 @@ public class MyFrame extends JFrame implements ActionListener {
 			inputField.setText(String.valueOf(erg));				
 		}
 		firstNum = String.valueOf(erg);
+	}*/
+	
+	private void berechne() {
+		equalsCommand = true;
+		currentNum = inputField.getText();
+		System.out.println(firstNum + " " + currentNum);
+		 
+		double num1 = Double.parseDouble(firstNum);
+		double num2 = Double.parseDouble(currentNum);
+		double erg = 0;
+		
+		
+		switch (operation) {
+		case "/":
+			if (currentNum.equalsIgnoreCase("0")) {
+				inputField.setText("ERROR");
+				return;
+			}
+			erg = num1 / num2;					
+			break;
+		case "*":
+			erg = num1 * num2;
+			break;
+		case "+":
+			erg = num1 + num2;
+			break;
+		case "-":
+			erg = num1 - num2;
+			break;
+		default:
+			return;
+		}
+		
+		// Ergebnis der aktuellen Berechnung als erste Zahl für die nächste Berechnung setzen
+		firstNum = String.valueOf(erg);
+		currentNum = "0";
+		
+		// Wenn das Ergebnis ein int ist --> im Display als Ganzzahl anzeigen, sonst als double anzeigen
+		if (erg % 1 == 0) {
+			inputField.setText(String.valueOf((int)erg));
+		}
+		else {
+			inputField.setText(firstNum);				
+		}
 	}
 
 	
