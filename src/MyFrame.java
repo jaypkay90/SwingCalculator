@@ -131,7 +131,7 @@ public class MyFrame extends JFrame implements ActionListener {
 		}
 	}
 	
-	private String firstNum;
+	private String firstNum = "0";
 	private String operation = "";
 	private String command;
 	private String currentNum;
@@ -154,13 +154,39 @@ public class MyFrame extends JFrame implements ActionListener {
 		}
 		
 		
-		if (equalsCommand) {
+		else if (equalsCommand) {////////////////////////////////////////////////////////////////////
+			if (command.equals("+/-") ) {
+				if (inputField.getText().charAt(0) != '-') {
+					//currentNum = String.format("-%s", inputField.getText());
+					inputField.setText(String.format("-%s", inputField.getText()));
+				}
+				
+				// Wenn Zahl im Display negativ --> entferne das Minuszeichen am Anfang
+				else {
+					//currentNum = inputField.getText().substring(1);
+					inputField.setText(inputField.getText().substring(1));
+				}
+			}
+			else if (command.equals(",")) {
+				firstNum = "0";
+				inputField.setText("0,");
+			}
+			else if (Arrays.binarySearch(calcOperations, command) < 0) {
+				equalsCommand = false;
+			}
 			if (command.equals("=")) {
 				return;				
 			}
-			else {
+			/*else if (!command.equals(",") && !command.equals("+/-")) {
 				equalsCommand = false;
 			}
+			else if (inputField.getText().equals("0.")) {
+				inputField.setText("0");
+			}
+			else if (Arrays.binarySearch(calcOperations, command) < 0) {
+				equalsCommand = false;
+				inputField.setText("0");
+			}*/
 		}
 		
 		// Funktion des Plus-Minus-Switch-Button implementieren
@@ -203,8 +229,6 @@ public class MyFrame extends JFrame implements ActionListener {
 		
 		// Komma-Taste implementieren
 		else if (command.equals(",")) {
-			String input = inputField.getText();
-			
 			if (operationCommand) {
 				inputField.setText("0.");
 				operationCommand = false;
@@ -212,6 +236,7 @@ public class MyFrame extends JFrame implements ActionListener {
 			
 			// Aktuelle Zahl aus dem Textfeld auslesen
 			//currentNum = inputField.getText();
+			String input = inputField.getText();
 			
 			// Wenn die Zahl bereits ein Komma enthält, darf kein zweites Komma eingegeben werden
 			if(input.contains(".")) {
@@ -232,37 +257,15 @@ public class MyFrame extends JFrame implements ActionListener {
 		}
 		
 		// Wenn Taste eine Rechenoperation ist...
-		/*else if (Arrays.binarySearch(calcOperations, command) >= 0) {
-			operationCommand = true;
-			operation = command;
-			firstNum = inputField.getText();
-			if (firstNum.endsWith(",")) {
-				firstNum = firstNum.substring(0, firstNum.length() - 2);
-			}
-		}*/
-		
-		// Wenn Taste eine Rechenoperation ist...
-		/*else if (Arrays.binarySearch(calcOperations, command) >= 0) {
-			operationCommand = true;
-			
-			operation = command;
-			//currentNum = "0";
-			firstNum = inputField.getText();
-			if (firstNum.endsWith(",")) {
-				firstNum = firstNum.substring(0, firstNum.length() - 2);
-			}
-			
-			//berechne();
-		}*/
-		
-		// Wenn Taste eine Rechenoperation ist...
 		else if (Arrays.binarySearch(calcOperations, command) >= 0) {
 			if (operationCommand) {
+				operation = command;
 				return;
 			}
-			operationCommand = true;
+			
 			lastOperationCommand = operation;
-			operation = command;
+			operation = command;				
+			operationCommand = true;
 			if (lastOperationCommand != "") {
 				berechne();
 			}
@@ -276,18 +279,24 @@ public class MyFrame extends JFrame implements ActionListener {
 		
 		// Wenn "=" Taste gedrückt wurde
 		else if (command.equals("=")) {
+			if (operationCommand) {
+				return;
+			}
+				
+				
 			equalsCommand = true;
 			currentNum = inputField.getText();
 			System.out.println(firstNum + " " + currentNum);
 			 
 			double num1 = Double.parseDouble(firstNum);
 			double num2 = Double.parseDouble(currentNum);
+			System.out.println(num1 + " " + num2);
 			double erg = 0;
 			
 			
 			switch (operation) {
 			case "/":
-				if (currentNum.equalsIgnoreCase("0")) {
+				if (currentNum.equals("0") || currentNum.equals("0.")) {
 					inputField.setText("ERROR");
 					return;
 				}
@@ -303,7 +312,8 @@ public class MyFrame extends JFrame implements ActionListener {
 				erg = num1 - num2;
 				break;
 			default:
-				return;
+				erg = num2;
+				//return;
 			}
 			
 			// Ergebnis der aktuellen Berechnung als erste Zahl für die nächste Berechnung setzen
@@ -322,68 +332,7 @@ public class MyFrame extends JFrame implements ActionListener {
 			
 		}
 }
-		
-		/*
-		else if (command.equals("/")) {
-			operationCommand = true;
-			operation = "/";
-			firstNum = inputField.getText();
-			if (firstNum.endsWith(",")) {
-				firstNum = firstNum.substring(0, firstNum.length() - 2);
-			}
-			//currentNum = "0";
-			//inputField.setText(currentNum);			
-		}
-		
-		else if (command.equals("+")) {
-			operationCommand = true;
-			operation = "+";
-			
-			// Wenn firstNum noch nicht gesetzt
-			if (!firstNumSet) {
-				firstNum = inputField.getText();
-				firstNumSet = true;
-				if (firstNum.endsWith(",")) {
-					firstNum = firstNum.substring(0, firstNum.length() - 2);
-				}
-			}
-			else {
-				berechne();
-				firstNumSet = false;
-			}
-			
-			//currentNum = "0";
-			//inputField.setText(currentNum);
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		else if (command.equals("-")) {
-			operationCommand = true;
-			operation = "-";
-			firstNum = inputField.getText();
-			if (firstNum.endsWith(",")) {
-				firstNum = firstNum.substring(0, firstNum.length() - 2);
-			}
-			//currentNum = "0";
-			//inputField.setText(currentNum);
-		}
-		
-		else if (command.equals("*")) {
-			operationCommand = true;
-			operation = "*";
-			firstNum = inputField.getText();
-			if (firstNum.endsWith(",")) {
-				firstNum = firstNum.substring(0, firstNum.length() - 2);
-			}
-			//currentNum = "0";
-			//inputField.setText(currentNum);
-		}*/
+	
 		
 	private void berechne() {
 		equalsCommand = true;
@@ -397,7 +346,7 @@ public class MyFrame extends JFrame implements ActionListener {
 		
 		switch (lastOperationCommand) {
 		case "/":
-			if (currentNum.equalsIgnoreCase("0")) {
+			if (currentNum.equals("0") || currentNum.equals("0.")) {
 				inputField.setText("ERROR");
 				return;
 			}
