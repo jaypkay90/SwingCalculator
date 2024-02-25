@@ -146,90 +146,64 @@ public class MyFrame extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// ActionCommand bekommen
 		command = e.getActionCommand();
-		//currentNum = inputField.getText();
 		
-		// Wenn im Display ERROR steht, kann nur die "C"-Taste gedrückt werden
+		// Wenn im Display ERROR steht, kann nur noch die "C"-Taste gedrückt werden
 		if (inputField.getText().equals("ERROR") && !command.equals("C")) {
 			return;
-		}
-		
-		
-		else if (equalsCommand) {////////////////////////////////////////////////////////////////////
-			if (command.equals("+/-") ) {
-				if (inputField.getText().charAt(0) != '-') {
-					//currentNum = String.format("-%s", inputField.getText());
-					inputField.setText(String.format("-%s", inputField.getText()));
-				}
-				
-				// Wenn Zahl im Display negativ --> entferne das Minuszeichen am Anfang
-				else {
-					//currentNum = inputField.getText().substring(1);
-					inputField.setText(inputField.getText().substring(1));
-				}
-			}
-			else if (command.equals(",")) {
-				firstNum = "0";
-				inputField.setText("0,");
-			}
-			else if (Arrays.binarySearch(calcOperations, command) < 0) {
-				equalsCommand = false;
-			}
-			if (command.equals("=")) {
-				return;				
-			}
-			/*else if (!command.equals(",") && !command.equals("+/-")) {
-				equalsCommand = false;
-			}
-			else if (inputField.getText().equals("0.")) {
-				inputField.setText("0");
-			}
-			else if (Arrays.binarySearch(calcOperations, command) < 0) {
-				equalsCommand = false;
-				inputField.setText("0");
-			}*/
 		}
 		
 		// Funktion des Plus-Minus-Switch-Button implementieren
 		if (command.equals("+/-")) {
 			// Wenn Zahl im Display nicht negativ --> setze ein Minus davor
 			if (inputField.getText().charAt(0) != '-') {
-				//currentNum = String.format("-%s", inputField.getText());
 				inputField.setText(String.format("-%s", inputField.getText()));
 			}
 			
 			// Wenn Zahl im Display negativ --> entferne das Minuszeichen am Anfang
 			else {
-				//currentNum = inputField.getText().substring(1);
 				inputField.setText(inputField.getText().substring(1));
 			}
 		}
 		
-		// Der Command von allen Tasten, abgesehen von der plusMinus-Taste hat eine Stringlänge von 1.		
+		// Der Command von allen Tasten, abgesehen von der Plus-Minus-Taste hat eine Stringlänge von 1. Daher müssen wir die Charlänge hier nicht abfragen		
 		// Wenn Taste mit Nummer gedrückt wurde...
 		else if (command.charAt(0) >= '0' && command.charAt(0) <= '9') {
+			// Wenn vor dem Drücken der Zahl eine Berechnung durchgeführt wurde, darf nach dem Drücken der Zahl wieder eine Berechnung durchgeführt werden
+			if (equalsCommand) {
+				inputField.setText("0");
+				equalsCommand = false;
+			}
+			
 			// Wenn nach einem Rechenoperations-Button eine Zahl gedrückt wird, dürfen wieder Rechenoperationen durchgeführt werden
 			if (operationCommand) {
 				inputField.setText("0");
 				operationCommand = false;
 			}
 			
-			// Eine neue Zahl wird eingeben (im Display steht eine 0)
-			if (inputField.getText().equals("0")) {
-				// Neue Zahl "anlegen"
-				//currentNum = command;
+			// Textfeld auslesen
+			String userInput = inputField.getText();
+			
+			// Fall 1: Eine neue Zahl wird eingeben (im Display steht eine 0)
+			if (userInput.equals("0")) {
+				// Neue Zahl im Display anzeigen
 				inputField.setText(command);
 			}
 			
-			// Eine bestehende Zahl wird durch eine Ziffer erweitert
+			// Fall 2: Eine bestehende Zahl wird durch eine Ziffer erweitert
 			else {
-				//currentNum = inputField.getText().concat(command);
-				inputField.setText(inputField.getText().concat(command));
+				inputField.setText(userInput.concat(command));
 			}
 		}
 		
 		// Komma-Taste implementieren
 		else if (command.equals(",")) {
-			if (operationCommand) {
+			// Wenn zuvor eine Berechnung durchgeführt wurde --> schreibe 0. ins Display
+			if (equalsCommand) {
+				inputField.setText("0.");
+			}
+			
+			// Wenn zuvor ein Rechenoperations-Button gedrückt wurde --> schreibe 0. ins Display --> danach dürfen wieder Rechenoperations-Button gedrückt werden
+			else if (operationCommand) {
 				inputField.setText("0.");
 				operationCommand = false;
 			}
@@ -254,10 +228,16 @@ public class MyFrame extends JFrame implements ActionListener {
 			currentNum = "0";
 			inputField.setText("0");
 			operation = "";
+			equalsCommand = false;
+			operationCommand = false;
 		}
 		
 		// Wenn Taste eine Rechenoperation ist...
 		else if (Arrays.binarySearch(calcOperations, command) >= 0) {
+			if (equalsCommand) {
+				equalsCommand = false;
+			}
+			
 			if (operationCommand) {
 				operation = command;
 				return;
@@ -280,6 +260,9 @@ public class MyFrame extends JFrame implements ActionListener {
 		// Wenn "=" Taste gedrückt wurde
 		else if (command.equals("=")) {
 			if (operationCommand) {
+				operation = "";
+			}
+			if (equalsCommand || operationCommand) {
 				return;
 			}
 				
@@ -393,8 +376,7 @@ KeyListener listener = new KeyListener() {
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			pressedKey = "=";
 		}
-		
-		if (pressedKey.equals(".")) {
+		else if (pressedKey.equals(".")) {
 			pressedKey = ",";
 		}
 		
@@ -412,15 +394,7 @@ KeyListener listener = new KeyListener() {
 			}
 		}
 		
-		/*if (commaBtn.getActionCommand().equals(pressedKey)) {
-			commaBtn.doClick();
-			return;
-		}
-		
-		if (plusMinusBtn.getActionCommand().equals(pressedKey)) {
-			plusMinusBtn.doClick();
-			return;
-		}*/
+		return;
 	}
 
 	@Override
