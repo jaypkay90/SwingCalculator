@@ -16,7 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 // Test
-public class MyFrame extends JFrame implements ActionListener {
+public class MyFrame extends JFrame implements ActionListener, KeyListener {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -48,7 +48,8 @@ public class MyFrame extends JFrame implements ActionListener {
 		inputField = new JTextField();
 		inputField.setEditable(false);
 		inputField.setFocusable(true);
-		inputField.addKeyListener(listener);
+		//inputField.addKeyListener(listener);
+		inputField.addKeyListener(this);
 		inputField.setText("0");
 		inputField.setHorizontalAlignment(JTextField.RIGHT);
 		
@@ -328,7 +329,7 @@ public class MyFrame extends JFrame implements ActionListener {
 			}
 			
 		}
-}
+	}
 	
 		
 	private void berechne() {
@@ -379,7 +380,7 @@ public class MyFrame extends JFrame implements ActionListener {
 	}
 
 	
-KeyListener listener = new KeyListener() {	
+//KeyListener listener = new KeyListener() {	
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -423,7 +424,7 @@ KeyListener listener = new KeyListener() {
 		// TODO Auto-generated method stub
 		
 	}
-};
+//};
 
 	
 }
