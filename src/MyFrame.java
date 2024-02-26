@@ -131,15 +131,12 @@ public class MyFrame extends JFrame implements ActionListener {
 		}
 	}
 	
-	private String firstNum = "0";
-	private String operation = "";
+	private String firstNum = "0", currentNum;
+	private String operation = "", lastOperationCommand;
 	private String command;
-	private String currentNum;
 	private boolean operationCommand = false;
 	private boolean equalsCommand = false;
-	private boolean firstNumSet = false;
 	private String[] calcOperations = {"*", "+", "-", "/"};
-	private String currentOperationCommand = "", lastOperationCommand;
 	
 	
 	@Override
@@ -209,7 +206,6 @@ public class MyFrame extends JFrame implements ActionListener {
 			}
 			
 			// Aktuelle Zahl aus dem Textfeld auslesen
-			//currentNum = inputField.getText();
 			String input = inputField.getText();
 			
 			// Wenn die Zahl bereits ein Komma enthält, darf kein zweites Komma eingegeben werden
@@ -234,21 +230,31 @@ public class MyFrame extends JFrame implements ActionListener {
 		
 		// Wenn Taste eine Rechenoperation ist...
 		else if (Arrays.binarySearch(calcOperations, command) >= 0) {
+			// Es darf wieder eine Berechnung durchgeführt werden
 			if (equalsCommand) {
 				equalsCommand = false;
 			}
 			
+			// Wenn zuvor bereits ein Rechenoperationsbutton gedrückt wurde: Speichere die aktuelle Operation für die nächste Berechenung ab und return
+			// Beispiel: 6 + 8 * - 4 --> Die Berechnung 6 + 8 = 14 wird in dem Moment durchgeführt, wo der User * drückt.
+			// Da wir danach - drücken, ist die Multiplikation im nächsten Schritt aber nicht gewünscht. Daher ist das - als Operation abzuspeichern.
+			// Sobald der User die 4 eingibt und danach = oder einen anderen Rechenoperationsbutton drückt, wird die Rechnung 14 - 4 = 10 ausgeführt
 			if (operationCommand) {
 				operation = command;
 				return;
 			}
 			
+			// lastOperationCommand: Der letzte Rechenoperationsbutton wird abgespeichert --> 6 + 4 - --> Sobald - gedrückt wird, ist lastOperationCommand +
 			lastOperationCommand = operation;
 			operation = command;				
 			operationCommand = true;
+			
+			// Wenn es einen vorherigen Rechencomand gibt --> führe die Berechnung aus --> 6 + 4 - --> Sobald - gedrückt wird, wird 6 + 4 = 10 berechnet
 			if (lastOperationCommand != "") {
 				berechne();
 			}
+			
+			// Wenn es keinen vorherigen Rechencommand gibt --> 6 + --> Sobald + gedrückt wird --> Speichere 6 als die erste Zahl zur Berechnung ab
 			else {
 				firstNum = inputField.getText();
 				if (firstNum.endsWith(",")) {
@@ -259,27 +265,35 @@ public class MyFrame extends JFrame implements ActionListener {
 		
 		// Wenn "=" Taste gedrückt wurde
 		else if (command.equals("=")) {
+			// Wenn zuvor ein Rechenoperationsbutton gedrückt wurde --> 6 + = --> Setze die operation auf "" und return
+			// Das löst folgenden Bug: 5 * = 2 = --> Sobald das erste = gedrückt wird, wird operation = ""
+			// Wenn das zweite = gedrückt wird, findet keine Berechnung statt, weil wir im Switch im default case landen, der die aktuelle Zahl (hier 2) returned.  
 			if (operationCommand) {
 				operation = "";
+				return;
 			}
-			if (equalsCommand || operationCommand) {
+			
+			// Wenn zuvor bereits eine Berechnung durchgeführt wurde (dazwischen wurde keine neue Zahl eingegeben) return
+			if (equalsCommand) {
 				return;
 			}
 				
-				
+			// Wenn wir hier landen, wird der Rest des Codes ausgeführt
 			equalsCommand = true;
 			currentNum = inputField.getText();
-			System.out.println(firstNum + " " + currentNum);
-			 
+			System.out.println(firstNum + " " + operation + " " + currentNum);
+			
+			// Speichere die beiden Zahlen für die Berechnung als double
 			double num1 = Double.parseDouble(firstNum);
 			double num2 = Double.parseDouble(currentNum);
 			System.out.println(num1 + " " + num2);
 			double erg = 0;
 			
-			
+			// Führe die Berechnung aus
 			switch (operation) {
 			case "/":
-				if (currentNum.equals("0") || currentNum.equals("0.")) {
+				// Teilen durch 0 ist verboten
+				if (num2 == 0) {
 					inputField.setText("ERROR");
 					return;
 				}
@@ -294,13 +308,13 @@ public class MyFrame extends JFrame implements ActionListener {
 			case "-":
 				erg = num1 - num2;
 				break;
+			// Wenn kein Rechenoperationsbutton gedrückt wurde --> gib die aktuelle Zahl zurück
 			default:
 				erg = num2;
-				//return;
 			}
 			
-			// Ergebnis der aktuellen Berechnung als erste Zahl für die nächste Berechnung setzen
-			//firstNum = String.valueOf(erg);
+			// currentNum zurück auf 0 setzen
+			// operation leeren, damit wir eine komplett neue Berechnung starten können
 			currentNum = "0";
 			operation = "";
 			
@@ -329,7 +343,8 @@ public class MyFrame extends JFrame implements ActionListener {
 		
 		switch (lastOperationCommand) {
 		case "/":
-			if (currentNum.equals("0") || currentNum.equals("0.")) {
+			// Teilen durch 0 ist verboten
+			if (num2 == 0) {
 				inputField.setText("ERROR");
 				return;
 			}
@@ -372,7 +387,10 @@ KeyListener listener = new KeyListener() {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		// Gedrückte Taste abspeichern
 		String pressedKey = String.valueOf(e.getKeyChar());
+		
+		// Enter-Key fungiert wie =, . fungiert wie Komma
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			pressedKey = "=";
 		}
@@ -380,6 +398,7 @@ KeyListener listener = new KeyListener() {
 			pressedKey = ",";
 		}
 		
+		// Die gedrückte Taste im numberBtns Array suchen, wenn gefunden klicken und return
 		for (JButton button : numberBtns) {
 			if (button.getActionCommand().equals(pressedKey)) {
 				button.doClick();
@@ -387,6 +406,7 @@ KeyListener listener = new KeyListener() {
 			}
 		}
 		
+		// Die gedrückte Taste im operationBtns Array suchen, wenn gefunden klicken und return
 		for (JButton button : operationBtns) {
 			if (button.getActionCommand().equalsIgnoreCase(pressedKey)) {
 				button.doClick();
@@ -394,6 +414,7 @@ KeyListener listener = new KeyListener() {
 			}
 		}
 		
+		// Wenn die gedrückte Taste bis hier nicht gefunden wurde, ist kein Button, der dieser Taste entspricht, auf dem Display --> return
 		return;
 	}
 
