@@ -48,7 +48,6 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 		inputField = new JTextField();
 		inputField.setEditable(false);
 		inputField.setFocusable(true);
-		//inputField.addKeyListener(listener);
 		inputField.addKeyListener(this);
 		inputField.setText("0");
 		inputField.setHorizontalAlignment(JTextField.RIGHT);
@@ -198,6 +197,7 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 			// Wenn zuvor eine Berechnung durchgeführt wurde --> schreibe 0. ins Display
 			if (equalsCommand) {
 				inputField.setText("0.");
+				equalsCommand = false;
 			}
 			
 			// Wenn zuvor ein Rechenoperations-Button gedrückt wurde --> schreibe 0. ins Display --> danach dürfen wieder Rechenoperations-Button gedrückt werden
@@ -266,10 +266,12 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 		
 		// Wenn "=" Taste gedrückt wurde
 		else if (command.equals("=")) {
+			berechne();
+		}
 			// Wenn zuvor ein Rechenoperationsbutton gedrückt wurde --> 6 + = --> Setze die operation auf "" und return
 			// Das löst folgenden Bug: 5 * = 2 = --> Sobald das erste = gedrückt wird, wird operation = ""
 			// Wenn das zweite = gedrückt wird, findet keine Berechnung statt, weil wir im Switch im default case landen, der die aktuelle Zahl (hier 2) returned.  
-			if (operationCommand) {
+			/*if (operationCommand) {
 				operation = "";
 				return;
 			}
@@ -328,11 +330,11 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 				inputField.setText(String.valueOf(erg));
 			}
 			
-		}
+		}*/
 	}
 	
 		
-	private void berechne() {
+	/*private void berechne() {
 		equalsCommand = true;
 		currentNum = inputField.getText();
 		System.out.println(firstNum + " " + currentNum);
@@ -377,10 +379,99 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 			inputField.setText(String.valueOf(erg));
 		}
 		
+	}*/
+	
+	private void berechne() {
+		if (command.equals("=")) {
+			// Wenn zuvor ein Rechenoperationsbutton gedrückt wurde --> 6 + = --> Setze die operation auf "" und return
+			// Das löst folgenden Bug: 5 * = 2 = --> Sobald das erste = gedrückt wird, wird operation = ""
+			// Wenn das zweite = gedrückt wird, findet keine Berechnung statt, weil wir im Switch im default case landen, der die aktuelle Zahl (hier 2) returned.  
+			if (operationCommand) {
+				operation = "";
+				return;
+			}
+			
+			// Wenn zuvor bereits eine Berechnung durchgeführt wurde (dazwischen wurde keine neue Zahl eingegeben) return
+			if (equalsCommand) {
+				return;
+			}
+		}
+		
+		// Wenn wir hier landen, wird der Rest des Codes ausgeführt
+		equalsCommand = true;
+		currentNum = inputField.getText();
+		System.out.println(firstNum + " " + operation + " " + currentNum);
+		
+		// Speichere die beiden Zahlen für die Berechnung als double
+		double num1 = Double.parseDouble(firstNum);
+		double num2 = Double.parseDouble(currentNum);
+		double erg = 0;
+		
+		// Wenn ein = diese Methode aufgerufen hat, muss die "akutellste" Berechnung durchgeführt werden
+		// 7 + 3 = --> Sobald = gedrückt wird, wird 7 + 3 berechnet
+		String operationToUse;
+		if (command.equals("=")) {
+			operationToUse = operation;
+		}
+		
+		// Wenn eine Rechenoperationstaste diese Methode aufgerufen hat, muss jetzt die Berechnung aus dem letzten Schritt durchgeführt werden
+		// Bspl: 6 + 2 * --> Sobald * gedrückt wird, wird 6 + 2 berechnet
+		else {
+			operationToUse = lastOperationCommand;
+		}
+		
+		switch (operationToUse) {
+		case "/":
+			// Teilen durch 0 ist verboten
+			if (num2 == 0) {
+				inputField.setText("ERROR");
+				return;
+			}
+			erg = num1 / num2;					
+			break;
+		case "*":
+			erg = num1 * num2;
+			break;
+		case "+":
+			erg = num1 + num2;
+			break;
+		case "-":
+			erg = num1 - num2;
+			break;
+		default:
+			if (command.equals("=")) {
+				// Wenn vor dem Drücken von = kein Rechenoperationsbutton gedrückt wurde, soll nichts berechnet werden --> die aktuelle Zahl wird zurückgegeben
+				erg = num2;
+			}
+			else {
+				return;				
+			}
+		}
+		
+		currentNum = "0";
+		
+		if (command.equals("=")) {
+			// Die letzte Rechenoperation löschen, denn nach = soll eine komplett neue Berechnung starten
+			operation = "";
+		}
+		else {
+			// Wenn ein Rechenoperationsbutton diese Methode aufgerufen hat: Ergebnis der aktuellen Berechnung als erste Zahl für die nächste Berechnung setzen
+			firstNum = String.valueOf(erg);			
+		}
+		
+		// Wenn das Ergebnis ein int ist --> im Display als Ganzzahl anzeigen, sonst als double anzeigen
+		if (erg % 1 == 0) {
+			inputField.setText(String.valueOf((int)erg));
+		}
+		else {
+			inputField.setText(firstNum);
+			inputField.setText(String.valueOf(erg));
+		}
+		
 	}
 
 	
-//KeyListener listener = new KeyListener() {	
+	//KeyListener implementieren	
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -424,7 +515,5 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 		// TODO Auto-generated method stub
 		
 	}
-//};
-
 	
 }
