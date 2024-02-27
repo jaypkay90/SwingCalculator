@@ -22,6 +22,7 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 	
 	private JButton[] numberBtns, operationBtns;
 	private JTextField inputField;
+	private HandleEvents handler;
 	
 	MyFrame() {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -37,6 +38,8 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 		
 		this.pack(); // Adjust the frame size, so that all components fit in
 		this.setVisible(true);
+		
+		handler = new HandleEvents(numberBtns, operationBtns, inputField);
 	}
 	
 	private JPanel createInputPanel() {
@@ -131,18 +134,22 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 		}
 	}
 	
-	private String firstNum = "0", currentNum;
+	
+	/*private String firstNum = "0", currentNum;
 	private String operation = "", lastOperationCommand;
 	private String command;
 	private boolean operationCommand = false;
 	private boolean equalsCommand = false;
-	private String[] calcOperations = {"*", "+", "-", "/"};
+	private String[] calcOperations = {"*", "+", "-", "/"};*/
+	
 	
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		handler.handleClick(e.getActionCommand());
+	}
 		// ActionCommand bekommen
-		command = e.getActionCommand();
+		/*command = e.getActionCommand();
 		
 		// Wenn im Display ERROR steht, kann nur noch die "C"-Taste gedrückt werden
 		if (inputField.getText().equals("ERROR") && !command.equals("C")) {
@@ -268,120 +275,9 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 		else if (command.equals("=")) {
 			berechne();
 		}
-			// Wenn zuvor ein Rechenoperationsbutton gedrückt wurde --> 6 + = --> Setze die operation auf "" und return
-			// Das löst folgenden Bug: 5 * = 2 = --> Sobald das erste = gedrückt wird, wird operation = ""
-			// Wenn das zweite = gedrückt wird, findet keine Berechnung statt, weil wir im Switch im default case landen, der die aktuelle Zahl (hier 2) returned.  
-			/*if (operationCommand) {
-				operation = "";
-				return;
-			}
-			
-			// Wenn zuvor bereits eine Berechnung durchgeführt wurde (dazwischen wurde keine neue Zahl eingegeben) return
-			if (equalsCommand) {
-				return;
-			}
-				
-			// Wenn wir hier landen, wird der Rest des Codes ausgeführt
-			equalsCommand = true;
-			currentNum = inputField.getText();
-			System.out.println(firstNum + " " + operation + " " + currentNum);
-			
-			// Speichere die beiden Zahlen für die Berechnung als double
-			double num1 = Double.parseDouble(firstNum);
-			double num2 = Double.parseDouble(currentNum);
-			System.out.println(num1 + " " + num2);
-			double erg = 0;
-			
-			// Führe die Berechnung aus
-			switch (operation) {
-			case "/":
-				// Teilen durch 0 ist verboten
-				if (num2 == 0) {
-					inputField.setText("ERROR");
-					return;
-				}
-				erg = num1 / num2;					
-				break;
-			case "*":
-				erg = num1 * num2;
-				break;
-			case "+":
-				erg = num1 + num2;
-				break;
-			case "-":
-				erg = num1 - num2;
-				break;
-			// Wenn kein Rechenoperationsbutton gedrückt wurde --> gib die aktuelle Zahl zurück
-			default:
-				erg = num2;
-			}
-			
-			// currentNum zurück auf 0 setzen
-			// operation leeren, damit wir eine komplett neue Berechnung starten können
-			currentNum = "0";
-			operation = "";
-			
-			// Wenn das Ergebnis ein int ist --> im Display als Ganzzahl anzeigen, sonst als double anzeigen
-			if (erg % 1 == 0) {
-				inputField.setText(String.valueOf((int)erg));
-			}
-			else {
-				inputField.setText(firstNum);
-				inputField.setText(String.valueOf(erg));
-			}
-			
-		}*/
-	}
-	
-		
-	/*private void berechne() {
-		equalsCommand = true;
-		currentNum = inputField.getText();
-		System.out.println(firstNum + " " + currentNum);
-		 
-		double num1 = Double.parseDouble(firstNum);
-		double num2 = Double.parseDouble(currentNum);
-		double erg = 0;
-		
-		
-		switch (lastOperationCommand) {
-		case "/":
-			// Teilen durch 0 ist verboten
-			if (num2 == 0) {
-				inputField.setText("ERROR");
-				return;
-			}
-			erg = num1 / num2;					
-			break;
-		case "*":
-			erg = num1 * num2;
-			break;
-		case "+":
-			erg = num1 + num2;
-			break;
-		case "-":
-			erg = num1 - num2;
-			break;
-		default:
-			return;
-		}
-		
-		// Ergebnis der aktuellen Berechnung als erste Zahl für die nächste Berechnung setzen
-		firstNum = String.valueOf(erg);
-		currentNum = "0";
-		
-		// Wenn das Ergebnis ein int ist --> im Display als Ganzzahl anzeigen, sonst als double anzeigen
-		if (erg % 1 == 0) {
-			inputField.setText(String.valueOf((int)erg));
-		}
-		else {
-			inputField.setText(firstNum);
-			inputField.setText(String.valueOf(erg));
-		}
-		
 	}*/
 	
-	private void berechne() {
+	/*private void berechne() {
 		if (command.equals("=")) {
 			// Wenn zuvor ein Rechenoperationsbutton gedrückt wurde --> 6 + = --> Setze die operation auf "" und return
 			// Das löst folgenden Bug: 5 * = 2 = --> Sobald das erste = gedrückt wird, wird operation = ""
@@ -468,7 +364,7 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 			inputField.setText(String.valueOf(erg));
 		}
 		
-	}
+	}*/
 
 	
 	//KeyListener implementieren	
