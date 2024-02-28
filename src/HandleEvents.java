@@ -13,14 +13,13 @@ public class HandleEvents {
 		this.numberBtns = numberBtns;
 		this.operationBtns = operationBtns;
 		this.inputField = inputField;
-		System.out.println(numberBtns);
 	}
 	
-	private String firstNum = "0", currentNum;
+	private String firstNum = "0", currentNum; // currentNum ist die zuletzt eingegebene Nummer
 	private String operation = "", lastOperationCommand;
 	private boolean operationCommand = false;
 	private boolean equalsCommand = false;
-	private String[] calcOperations = {"*", "+", "-", "/"};
+	private String[] calcOperations = {"*", "+", "-", "/"}; // Array ist bereits sortiert
 	
 	public void handleClick(String command) {
 		// Wenn im Display ERROR steht, kann nur noch die "C"-Taste gedrückt werden
@@ -56,11 +55,11 @@ public class HandleEvents {
 		
 		// Wenn "=" Taste gedrückt wurde
 		else if (command.equals("=")) {
-			berechne(command);
+			calculate(command);
 		}
 	}
 	
-	
+
 	private void handleCalcOperationCommands(String command) {
 		// Es darf wieder eine Berechnung durchgeführt werden
 		if (equalsCommand) {
@@ -83,7 +82,7 @@ public class HandleEvents {
 		
 		// Wenn es einen vorherigen Rechencomand gibt --> führe die Berechnung aus --> 6 + 4 - --> Sobald - gedrückt wird, wird 6 + 4 = 10 berechnet
 		if (lastOperationCommand != "") {
-			berechne(command);
+			calculate(command);
 		}
 		
 		// Wenn es keinen vorherigen Rechencommand gibt --> 6 + --> Sobald + gedrückt wird --> Speichere 6 als die erste Zahl zur Berechnung ab
@@ -107,7 +106,7 @@ public class HandleEvents {
 	
 	
 	private void handleCommaCommands() {
-		// Wenn zuvor eine Berechnung durchgeführt wurde --> schreibe 0. ins Display
+		// Wenn zuvor eine Berechnung durchgeführt wurde --> schreibe 0. ins Display --> danach dürfen wieder Berechnungen durchgeführt werden
 		if (equalsCommand) {
 			inputField.setText("0.");
 			equalsCommand = false;
@@ -148,10 +147,13 @@ public class HandleEvents {
 		// Textfeld auslesen
 		String userInput = inputField.getText();
 		
-		// Fall 1: Eine neue Zahl wird eingeben (im Display steht eine 0)
+		// Fall 1: Eine neue Zahl wird eingeben (im Display steht eine 0 oder eine -0)
 		if (userInput.equals("0")) {
 			// Neue Zahl im Display anzeigen
 			inputField.setText(command);
+		}
+		else if(userInput.equals("-0")) {
+			inputField.setText(String.format("-%s", command));
 		}
 		
 		// Fall 2: Eine bestehende Zahl wird durch eine Ziffer erweitert
@@ -174,7 +176,7 @@ public class HandleEvents {
 	}
 	
 	
-	private void berechne(String command) {
+	private void calculate(String command) {
 		if (command.equals("=")) {
 			// Wenn zuvor ein Rechenoperationsbutton gedrückt wurde --> 6 + = --> Setze die operation auf "" und return
 			// Das löst folgenden Bug: 5 * = 2 = --> Sobald das erste = gedrückt wird, wird operation = ""
@@ -198,7 +200,7 @@ public class HandleEvents {
 		// Speichere die beiden Zahlen für die Berechnung als double
 		double num1 = Double.parseDouble(firstNum);
 		double num2 = Double.parseDouble(currentNum);
-		double erg = 0;
+		//double erg = 0;
 		
 		// Wenn ein = diese Methode aufgerufen hat, muss die "akutellste" Berechnung durchgeführt werden
 		// 7 + 3 = --> Sobald = gedrückt wird, wird 7 + 3 berechnet
@@ -213,7 +215,10 @@ public class HandleEvents {
 			operationToUse = lastOperationCommand;
 		}
 		
-		switch (operationToUse) {
+		// Ergebnis berechnen
+		double erg = calcResult(num1, num2, operationToUse, command);
+		
+		/*switch (operationToUse) {
 		case "/":
 			// Teilen durch 0 ist verboten
 			if (num2 == 0) {
@@ -239,6 +244,11 @@ public class HandleEvents {
 			else {
 				return;				
 			}
+		}*/
+		
+		// Wenn die Berechnung zu einem Error geführt hat.. return
+		if (inputField.getText().equals("ERROR")) {
+			return;
 		}
 		
 		currentNum = "0";
@@ -261,6 +271,62 @@ public class HandleEvents {
 			inputField.setText(String.valueOf(erg));
 		}
 		
+	}
+	
+	private double calcResult(double num1, double num2, String operator, String command) {
+		double erg = 0;
+		
+		switch (operator) {
+		case "/":
+			// Teilen durch 0 ist verboten
+			if (num2 == 0) {
+				inputField.setText("ERROR");
+				break;
+			}
+			erg = num1 / num2;					
+			break;
+		case "*":
+			erg = num1 * num2;
+			break;
+		case "+":
+			erg = num1 + num2;
+			break;
+		case "-":
+			erg = num1 - num2;
+			break;
+		default:
+			if (command.equals("=")) {
+				// Wenn vor dem Drücken von = kein Rechenoperationsbutton gedrückt wurde, soll nichts berechnet werden --> die aktuelle Zahl wird zurückgegeben
+				erg = num2;
+			}
+			/*else {
+				return;				
+			}*/
+		}
+		
+		return erg;
+	}
+	
+	
+	public void handleKeyPress(String pressedKey) {
+		// Die gedrückte Taste im numberBtns Array suchen, wenn gefunden klicken und return
+		for (JButton button : numberBtns) {
+			if (button.getActionCommand().equals(pressedKey)) {
+				button.doClick();
+				return;
+			}
+		}
+		
+		// Die gedrückte Taste im operationBtns Array suchen, wenn gefunden klicken und return
+		for (JButton button : operationBtns) {
+			if (button.getActionCommand().equalsIgnoreCase(pressedKey)) {
+				button.doClick();
+				return;
+			}
+		}
+		
+		// Wenn die gedrückte Taste bis hier nicht gefunden wurde, ist kein Button, der dieser Taste entspricht, auf dem Display --> return
+		return;
 	}
 	
 	
