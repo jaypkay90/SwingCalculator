@@ -1,13 +1,11 @@
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.ComponentOrientation;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -15,6 +13,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
+
+import java.awt.Font;
 
 public class MyFrame extends JFrame implements ActionListener, KeyListener {
 
@@ -23,6 +24,7 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 	private JButton[] numberBtns, operationBtns;
 	private JTextField inputField;
 	private HandleEvents handler;
+	private Font inkTree = new Font("Ink Free", Font.BOLD, 25);
 	
 	public MyFrame() {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -52,7 +54,10 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 		inputField.setEditable(false);
 		inputField.setFocusable(true);
 		inputField.addKeyListener(this);
+		inputField.setBackground(Color.WHITE);
+		inputField.setBorder(new LineBorder(Color.BLACK, 2, true));
 		inputField.setText("0");
+		inputField.setFont(inkTree);
 		inputField.setHorizontalAlignment(JTextField.RIGHT);
 		
 		inputPanel.add(inputField, BorderLayout.CENTER);
@@ -74,6 +79,7 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 
 		for (int i = numberBtns.length - 3; i >= 0 ; i--) {
 			numberBtns[i] = new JButton();
+			
 			if (i == 0) {
 				numberBtns[i].setText(String.format("%d", i));
 			}
@@ -89,6 +95,7 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 			
 			numberBtns[i].addActionListener(this);
 			numberBtns[i].setFocusable(false);
+			numberBtns[i].setFont(inkTree);
 			numberPanel.add(numberBtns[i]);
 		}
 		
@@ -99,6 +106,7 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 		for (int i = 10; i < 12; i++) {
 			numberBtns[i].addActionListener(this);
 			numberBtns[i].setFocusable(false);
+			numberBtns[i].setFont(inkTree);
 			numberPanel.add(numberBtns[i]);
 		}
 		
@@ -120,6 +128,7 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 			operationBtns[i] = new JButton();
 			operationBtns[i].addActionListener(this);
 			operationBtns[i].setFocusable(false);
+			operationBtns[i].setFont(inkTree);
 		}
 		
 		operationBtns[0].setText("C");

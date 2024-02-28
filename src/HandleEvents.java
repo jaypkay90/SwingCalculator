@@ -1,6 +1,9 @@
+import java.awt.Font;
 import java.util.Arrays;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 public class HandleEvents {
@@ -56,6 +59,22 @@ public class HandleEvents {
 		// Wenn "=" Taste gedrückt wurde
 		else if (command.equals("=")) {
 			calculate(command);
+		}
+		
+		// Easter Egg
+		if (inputField.getText().equals("13091985")) {
+			// Open new window
+			JFrame frame = new JFrame();
+			JLabel label = new JLabel();
+			label.setBounds(0,0,100,50);
+			label.setFont(new Font(null, Font.PLAIN, 25));
+			
+			frame.add(label);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setSize(420,420);
+			frame.setLayout(null);
+			frame.setVisible(true);
+			return;
 		}
 	}
 	
