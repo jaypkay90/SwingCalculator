@@ -22,6 +22,7 @@ public class HandleEvents {
 	private String operation = "", lastOperationCommand;
 	private boolean operationCommand = false;
 	private boolean equalsCommand = false;
+	private boolean easterEggFound = false;
 	private String[] calcOperations = {"*", "+", "-", "/"}; // Array ist bereits sortiert
 	
 	public void handleClick(String command) {
@@ -62,19 +63,11 @@ public class HandleEvents {
 		}
 		
 		// Easter Egg
-		if (inputField.getText().equals("13091985")) {
-			// Open new window
-			JFrame frame = new JFrame();
-			JLabel label = new JLabel();
-			label.setBounds(0,0,100,50);
-			label.setFont(new Font(null, Font.PLAIN, 25));
-			
-			frame.add(label);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.setSize(420,420);
-			frame.setLayout(null);
-			frame.setVisible(true);
-			return;
+		//if (inputField.getText().equals("13091985")) {
+			if (!easterEggFound && inputField.getText().equals("13")) {
+			// Easter Egg anzeigen und als gefunden markieren
+			new EasterEgg();
+			easterEggFound = true;
 		}
 	}
 	

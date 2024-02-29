@@ -149,7 +149,6 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 	public void actionPerformed(ActionEvent e) {
 		// ActionCommand "bearbeiten"
 		handler.handleClick(e.getActionCommand());
-		
 		return;
 	}
 
