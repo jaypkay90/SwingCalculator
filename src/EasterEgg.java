@@ -25,7 +25,7 @@ public class EasterEgg extends JFrame implements WindowListener{
 		this.setResizable(false);
 		this.addWindowListener(this); // Window Listener hinzufügen
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // beim Schließen: Nur das aktive Fenster schließen, NICHT das ganze Pogramm
-		this.setLocationRelativeTo(hauptframe);
+		this.setLocationRelativeTo(hauptframe); // Diesen Frame in der Nähe des Hauptframes (Taschenrechner) anzeigen
 		this.getContentPane().add(easterEggLabel); // label zum content hinzufügen
 		this.pack();
 		this.setVisible(true);
