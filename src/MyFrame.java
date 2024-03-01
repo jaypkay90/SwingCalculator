@@ -47,7 +47,7 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 		this.pack(); 
 		this.setVisible(true);
 		
-		handler = new HandleEvents(numberBtns, operationBtns, inputField);
+		handler = new HandleEvents(numberBtns, operationBtns, inputField, this);
 	}
 	
 	private JPanel createInputPanel() {
@@ -125,9 +125,6 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 			
 			// Aktuellen Button konfigurieren und zum Panel hinzufügen
 			configureButton(numberBtns[i]);
-			/*numberBtns[i].addActionListener(this);
-			numberBtns[i].setFocusable(false);
-			numberBtns[i].setFont(inkTree);*/
 			numberPanel.add(numberBtns[i]);
 		}
 		
@@ -137,9 +134,6 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 		
 		for (int i = 10; i < 12; i++) {
 			configureButton(numberBtns[i]);
-			/*numberBtns[i].addActionListener(this);
-			numberBtns[i].setFocusable(false);
-			numberBtns[i].setFont(inkTree);*/
 			numberPanel.add(numberBtns[i]);
 		}
 		
@@ -168,9 +162,6 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 		for (int i = 0; i < operationBtns.length; i++) {
 			operationBtns[i] = new JButton();
 			configureButton(operationBtns[i]);
-			/*operationBtns[i].addActionListener(this);
-			operationBtns[i].setFocusable(false);
-			operationBtns[i].setFont(inkTree);*/
 		}
 		
 		// Den Text der Buttons festlegen

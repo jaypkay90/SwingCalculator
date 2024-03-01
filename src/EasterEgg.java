@@ -17,7 +17,7 @@ public class EasterEgg extends JFrame implements WindowListener{
 	
 	private static final long serialVersionUID = 1L;
 
-	EasterEgg() {
+	EasterEgg(JFrame hauptframe) {
 		JLabel easterEggLabel = createEasterEggLabel();
 		
 		ImageIcon icon = new ImageIcon("calculator.png");
@@ -25,6 +25,7 @@ public class EasterEgg extends JFrame implements WindowListener{
 		this.setResizable(false);
 		this.addWindowListener(this); // Window Listener hinzufügen
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // beim Schließen: Nur das aktive Fenster schließen, NICHT das ganze Pogramm
+		this.setLocationRelativeTo(hauptframe);
 		this.getContentPane().add(easterEggLabel); // label zum content hinzufügen
 		this.pack();
 		this.setVisible(true);

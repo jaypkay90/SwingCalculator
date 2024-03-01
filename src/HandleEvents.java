@@ -10,12 +10,14 @@ public class HandleEvents {
 	private JButton[] numberBtns;
 	private JButton[] operationBtns;
 	private JTextField inputField;
+	private JFrame frame;
 	
 	// Konstruktor
-	public HandleEvents(JButton[] numberBtns, JButton[] operationBtns, JTextField inputField) {
+	public HandleEvents(JButton[] numberBtns, JButton[] operationBtns, JTextField inputField, JFrame frame) {
 		this.numberBtns = numberBtns;
 		this.operationBtns = operationBtns;
 		this.inputField = inputField;
+		this.frame = frame;
 	}
 	
 	private String firstNum = "0", currentNum; // currentNum ist die zuletzt eingegebene Nummer
@@ -65,7 +67,8 @@ public class HandleEvents {
 		// Easter Egg
 		if (!easterEggFound && inputField.getText().equals("13091985")) {
 			// Easter Egg anzeigen und als gefunden markieren
-			new EasterEgg();
+			// Der Hauptframe wird als Input mitgegeben, um das PopUp-Window relativ zum Hauptframe anzeigen zu können
+			new EasterEgg(frame);
 			easterEggFound = true;
 		}
 	}
