@@ -63,8 +63,7 @@ public class HandleEvents {
 		}
 		
 		// Easter Egg
-		//if (inputField.getText().equals("13091985")) {
-			if (!easterEggFound && inputField.getText().equals("13")) {
+		if (!easterEggFound && inputField.getText().equals("13091985")) {
 			// Easter Egg anzeigen und als gefunden markieren
 			new EasterEgg();
 			easterEggFound = true;
