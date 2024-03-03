@@ -125,7 +125,8 @@ public class HandleEvents {
 		}
 		
 		// Wenn zuvor ein Rechenoperations-Button gedrückt wurde --> schreibe 0. ins Display --> danach dürfen wieder Rechenoperations-Button gedrückt werden
-		else if (operationCommand) {
+		// else if {
+		if (operationCommand) {
 			inputField.setText("0.");
 			operationCommand = false;
 		}
@@ -207,7 +208,6 @@ public class HandleEvents {
 		// Wenn wir hier landen, wird der Rest des Codes ausgeführt
 		equalsCommand = true;
 		currentNum = inputField.getText();
-		System.out.println(firstNum + " " + operation + " " + currentNum);
 		
 		// Speichere die beiden Zahlen für die Berechnung als double
 		double num1 = Double.parseDouble(firstNum);
@@ -226,6 +226,8 @@ public class HandleEvents {
 		else {
 			operationToUse = lastOperationCommand;
 		}
+		
+		System.out.println(firstNum + " " + operation + " " + currentNum);
 		
 		// Ergebnis berechnen
 		double erg = calcResult(num1, num2, operationToUse, command);
