@@ -227,38 +227,10 @@ public class HandleEvents {
 			operationToUse = lastOperationCommand;
 		}
 		
-		System.out.println(firstNum + " " + operation + " " + currentNum);
+		// System.out.println(firstNum + " " + operationToUse + " " + currentNum);
 		
 		// Ergebnis berechnen
 		double erg = calcResult(num1, num2, operationToUse, command);
-		
-		/*switch (operationToUse) {
-		case "/":
-			// Teilen durch 0 ist verboten
-			if (num2 == 0) {
-				inputField.setText("ERROR");
-				return;
-			}
-			erg = num1 / num2;					
-			break;
-		case "*":
-			erg = num1 * num2;
-			break;
-		case "+":
-			erg = num1 + num2;
-			break;
-		case "-":
-			erg = num1 - num2;
-			break;
-		default:
-			if (command.equals("=")) {
-				// Wenn vor dem Drücken von = kein Rechenoperationsbutton gedrückt wurde, soll nichts berechnet werden --> die aktuelle Zahl wird zurückgegeben
-				erg = num2;
-			}
-			else {
-				return;				
-			}
-		}*/
 		
 		// Wenn die Berechnung zu einem Error geführt hat.. return
 		if (inputField.getText().equals("ERROR")) {
@@ -313,9 +285,6 @@ public class HandleEvents {
 				// Wenn vor dem Drücken von = kein Rechenoperationsbutton gedrückt wurde, soll nichts berechnet werden --> die aktuelle Zahl wird zurückgegeben
 				erg = num2;
 			}
-			/*else {
-				return;				
-			}*/
 		}
 		
 		return erg;

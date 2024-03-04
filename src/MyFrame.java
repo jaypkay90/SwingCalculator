@@ -47,6 +47,7 @@ public class MyFrame extends JFrame implements ActionListener, KeyListener {
 		this.pack(); 
 		this.setVisible(true);
 		
+		// Instanz der Event-Handler Klasse initialisieren --> In dieser Klasse steht der Code für die logischen Berechnungen drin
 		handler = new HandleEvents(numberBtns, operationBtns, inputField, this);
 	}
 	
